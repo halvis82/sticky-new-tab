@@ -1,0 +1,20 @@
+# Supabase pauses a free project after a week without traffic. One read a day prevents that,
+# for the weeks nobody opens a new tab.
+name: Keep database awake
+on:
+  schedule:
+    - cron: '17 9 * * *'
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v5
+      - name: Read one row
+        run: |
+          grep -q YOUR-PROJECT-REF web/config.js && { echo "config.js not filled in yet"; exit 0; }
+          URL=$(sed -n "s/.*url: '\(.*\)'.*/\1/p" web/config.js)
+          KEY=$(sed -n "s/.*key: '\(.*\)'.*/\1/p" web/config.js)
+          curl -fsS "$URL/rest/v1/notes?select=id&limit=1" -H "apikey: $KEY" > /dev/null
+          echo "ok"

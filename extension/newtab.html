@@ -1,0 +1,70 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>New Tab</title>
+  <link rel="icon" sizes="16x16" href="assets/favicon-16.png">
+  <link rel="icon" sizes="32x32" href="assets/favicon.png">
+  <link rel="stylesheet" href="newtab.css">
+</head>
+<body>
+  <!-- Chrome draws an 80px gradient under the OneGoogleBar over a background image. -->
+  <div id="top-scrim"></div>
+
+  <main id="ntp">
+    <div id="logo-block">
+      <div id="doodle-box"><div id="logo"></div></div>
+    </div>
+
+    <form id="search" autocomplete="off">
+      <svg id="search-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+      </svg>
+      <input id="q" type="text" placeholder="Search Google or type a URL" spellcheck="false">
+    </form>
+
+    <div id="tiles"></div>
+  </main>
+
+  <a id="attribution" target="_blank" rel="noreferrer" hidden>
+    <span id="attribution-row">
+      <svg id="link-icon" viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M19 19H5V5h7V3H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z"/>
+      </svg>
+      <span id="attribution-text"></span>
+    </span>
+  </a>
+
+  <button id="customize" title="Customize this page" hidden>
+    <svg viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 0 0 0-1.41l-2.34-2.34a.996.996 0 0 0-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/>
+    </svg>
+    Customize Chrome
+  </button>
+
+  <nav id="rail">
+    <div id="rail-body">
+      <button class="rail-btn" id="new-note"><span>New</span><span>note</span></button>
+      <button class="rail-btn" id="toggle-all"><span>Hide</span><span>notes</span></button>
+      <button class="rail-btn" id="history-btn" title="History"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg><span>History</span></button>
+    </div>
+    <div id="rail-arrow" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M15.4 7.4 14 6l-6 6 6 6 1.4-1.4-4.6-4.6z"/></svg>
+    </div>
+  </nav>
+
+  <div id="board"></div>
+
+  <div id="toast" hidden>
+    <span id="toast-text"></span>
+    <button id="undo">Undo</button>
+  </div>
+
+  <!-- Live sync with the web app. All local files: an extension page cannot load remote code. -->
+  <script src="vendor/supabase.js"></script>
+  <script src="config.js"></script>
+  <script src="sync.js"></script>
+  <script src="history.js"></script>
+  <script src="newtab.js"></script>
+</body>
+</html>

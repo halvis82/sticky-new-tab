@@ -1,0 +1,18 @@
+.DS_Store
+node_modules/
+__pycache__/
+
+# secrets: the notes password and the Supabase secret key
+.env*
+web/.vercel/
+
+# copied into the extension by web/copy-to-extension.sh
+extension/config.js
+
+# personal data the extension scripts write
+extension/backups/
+extension/seed.json
+extension/restore.json
+extension/theme.json
+extension/assets/background.jpg
+extension/assets/logo.png

@@ -1,0 +1,9 @@
+node_modules
+scripts
+.claude
+copy-to-extension.sh
+package.json
+package-lock.json
+README.md
+.agents
+skills-lock.json

@@ -1,0 +1,187 @@
+/* The board without the new tab dressing: no logo, search box or wallpaper, just the notes
+   where they are in Chrome, on a plain background. Plus a drawer with every note. */
+
+#ntp, #top-scrim, #attribution, #customize { display: none !important; }
+
+#drawer-btn {
+  position: fixed;
+  top: 12px;
+  left: 14px;
+  z-index: 1001;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px 0 10px;
+  border: 0;
+  border-radius: 18px;
+  background: rgba(127, 127, 127, .16);
+  color: inherit;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+#drawer-btn:hover { background: rgba(127, 127, 127, .28); }
+#drawer-btn svg { width: 18px; height: 18px; fill: currentColor; }
+
+.dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #9aa0a6;
+}
+
+.dot[data-sync="live"] { background: #1e8e3e; }
+.dot[data-sync="offline"] { background: #d93025; }
+
+#drawer {
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  z-index: 1000;
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  padding: 60px 12px 12px;
+  background: var(--bg);
+  color: var(--fg);
+  box-shadow: 0 0 24px rgba(0, 0, 0, .25);
+  transform: translateX(-105%);
+  transition: transform .18s ease-out;
+}
+
+#drawer.open { transform: none; }
+
+.drawer-head {
+  display: flex;
+  gap: 8px;
+}
+
+#drawer-q {
+  flex: 1;
+  height: 38px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 19px;
+  background: var(--tile-hover);
+  color: inherit;
+  font: inherit;
+  outline: 0;
+}
+
+#drawer-q:focus { border-color: #1a73e8; }
+
+#drawer-new {
+  width: 38px;
+  height: 38px;
+  border: 0;
+  border-radius: 19px;
+  background: #1a73e8;
+  color: #fff;
+  font: inherit;
+  font-size: 22px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.drawer-count {
+  padding: 12px 6px 6px;
+  font-size: 12px;
+  color: var(--muted);
+}
+
+#drawer-list {
+  flex: 1;
+  margin: 0;
+  padding: 0 2px 0 0;
+  list-style: none;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.drawer-card {
+  position: relative;
+  padding: 10px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: var(--note-shadow);
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.drawer-title {
+  margin-bottom: 2px;
+  font-size: 14.5px;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.drawer-card:hover { filter: brightness(.96); }
+
+.drawer-card { padding-right: 34px; }
+.drawer-pin {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 26px;
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  padding: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: inherit;
+  opacity: .4;
+  cursor: pointer;
+}
+.drawer-pin.on { opacity: .85; }
+.drawer-pin:hover { opacity: 1; background: rgba(127, 127, 127, .22); }
+.drawer-pin svg { width: 15px; height: 15px; fill: currentColor; display: block; }
+
+.drawer-text {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.drawer-text.lead > div:first-child { font-weight: 600; }
+.drawer-text:empty { display: none; }
+.drawer-text.empty { opacity: .55; font-style: italic; }
+.drawer-text b, .drawer-text strong { font-weight: 700; }
+.drawer-text .link { text-decoration: underline; text-underline-offset: 2px; }
+.drawer-text .chip::before { content: "\1F4CE\00A0"; }
+
+/* Dragging a card to another place in the list (cards.js). */
+.sorting .drawer-card { transition: transform .2s ease; }
+.drawer-card.dragging {
+  z-index: 5;
+  transition: none;
+  filter: none;
+  box-shadow: 0 10px 26px rgba(0, 0, 0, .25), 0 2px 6px rgba(0, 0, 0, .12);
+  cursor: grabbing;
+}
+.drawer-card.dragging.settling { transition: transform .18s ease; }
+.still .drawer-card { transition: none !important; }
+
+.drawer-meta {
+  margin-top: 6px;
+  font-size: 11.5px;
+  opacity: .65;
+}
+
+.note.flash { box-shadow: 0 0 0 3px #1a73e8, var(--note-shadow); }
+
+/* The history panel opens under the drawer button. */
+#history-panel { padding-top: 58px; }

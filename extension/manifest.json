@@ -1,0 +1,25 @@
+{
+  "manifest_version": 3,
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAksIdVP/Ut1MEpXrfYM2SpLZb4HAEdYmHB7h+f8f+1ERgGxXlYvabJPtSaocALDju43f3hab4aZA+czw2R0bFzyZ7hFKiPOz/w8cl5h0A5WSVhB2F3rx7wksSXohYyEOhTXLRG+3iZnk9vafvaReekuE+weyX6APEbeotSQdwDAZyWCjo7WbD0G2u8BrfkOpyRgbl4HPkRup77uDNyd+FVkl+1xjLHI+44/5WhVhEiSgpGPzpSQWrrbM2kKE9mlJIaLAcO0VnvFHJeHdysvC/V/lf3VRL1Bw9Su+GXD2N14UIzt/A0VwghhcWiBOiN6/2UAZTFK3w7W8X260gLwZiuQIDAQAB",
+  "name": "Sticky New Tab",
+  "version": "1.2.0",
+  "description": "Persistent, movable sticky notes on the new tab page. Everything stored locally.",
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "topSites",
+    "favicon"
+  ],
+  "chrome_url_overrides": {
+    "newtab": "newtab.html"
+  },
+  "host_permissions": [
+    "https://www.google.com/"
+  ],
+  "icons": {
+    "16": "assets/icon-16.png",
+    "32": "assets/icon-32.png",
+    "48": "assets/icon-48.png",
+    "128": "assets/icon-128.png"
+  }
+}

@@ -1,0 +1,23 @@
+{
+  "name": "sticky-notes-web",
+  "version": "1.0.0",
+  "scripts": {
+    "serve": "python3 -m http.server 5173",
+    "migrate": "node scripts/migrate.mjs",
+    "icons": "node scripts/icons.mjs",
+    "ext": "./copy-to-extension.sh",
+    "test:web": "node tests/web.mjs",
+    "test:extension": "node tests/extension.mjs",
+    "test:history": "node tests/history.mjs",
+    "test:cards": "node tests/cards.mjs",
+    "test:pins": "node tests/pins.mjs",
+    "test:fold": "node tests/fold.mjs"
+  },
+  "description": "The sticky notes from the Chrome new tab page, on any device, live.",
+  "devDependencies": {
+    "@supabase/supabase-js": "^2.109.0",
+    "pg": "^8.23.0",
+    "playwright": "1.58"
+  },
+  "private": true
+}

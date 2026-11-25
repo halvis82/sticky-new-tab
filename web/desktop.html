@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Notes</title>
+  <link rel="icon" type="image/svg+xml" href="icon.svg">
+  <link rel="apple-touch-icon" href="icon-180.png">
+  <script>
+    // Phones get the app at /, this page is the desktop board.
+    if (!matchMedia('(min-width: 800px)').matches) location.replace('./' + location.hash);
+  </script>
+  <link rel="stylesheet" href="newtab.css">
+  <link rel="stylesheet" href="desktop.css">
+</head>
+<body>
+  <!-- The board code expects the new tab page's own elements. They stay, hidden: this page
+       is just the notes, where they are in Chrome, on a plain background. -->
+  <div id="top-scrim"></div>
+  <main id="ntp" hidden>
+    <div id="logo-block"><div id="doodle-box"><div id="logo"></div></div></div>
+    <form id="search" autocomplete="off"><input id="q" type="text"></form>
+    <div id="tiles"></div>
+  </main>
+  <a id="attribution" hidden><span id="attribution-row"><span id="attribution-text"></span></span></a>
+  <button id="customize" hidden></button>
+
+  <nav id="rail">
+    <div id="rail-body">
+      <button class="rail-btn" id="new-note"><span>New</span><span>note</span></button>
+      <button class="rail-btn" id="toggle-all"><span>Hide</span><span>notes</span></button>
+      <button class="rail-btn" id="history-btn" title="History"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 3a9 9 0 0 0-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42A8.954 8.954 0 0 0 13 21a9 9 0 0 0 0-18zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z"/></svg><span>History</span></button>
+    </div>
+    <div id="rail-arrow" aria-hidden="true">
+      <svg viewBox="0 0 24 24"><path d="M15.4 7.4 14 6l-6 6 6 6 1.4-1.4-4.6-4.6z"/></svg>
+    </div>
+  </nav>
+
+  <div id="board"></div>
+
+  <!-- The site's extras: every note in a list, with search. -->
+  <button id="drawer-btn" title="All notes" aria-label="All notes">
+    <svg viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+    <span>Notes</span>
+    <span id="drawer-status" class="dot" data-sync="connecting" title="Connecting"></span>
+  </button>
+  <aside id="drawer" aria-label="All notes">
+    <div class="drawer-head">
+      <input id="drawer-q" type="search" placeholder="Search notes" autocomplete="off" spellcheck="false">
+      <button id="drawer-new" title="New note" aria-label="New note">+</button>
+    </div>
+    <div id="drawer-count" class="drawer-count"></div>
+    <ul id="drawer-list"></ul>
+  </aside>
+
+  <div id="toast" hidden>
+    <span id="toast-text"></span>
+    <button id="undo">Undo</button>
+  </div>
+
+  <script src="vendor/supabase.js"></script>
+  <script src="config.js"></script>
+  <script src="sync.js"></script>
+  <script src="history.js"></script>
+  <script src="chrome-shim.js"></script>
+  <script src="newtab.js"></script>
+  <script src="cards.js"></script>
+  <script src="desktop.js"></script>
+</body>
+</html>
