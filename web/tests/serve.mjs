@@ -42,4 +42,5 @@ export async function serve() {
 // Tests that want a normal window give the context this.
 export const NORMAL_WINDOW = () => {
   Object.defineProperty(window, 'outerHeight', { get: () => innerHeight + 87 });
+  Object.defineProperty(screen, 'height', { get: () => innerHeight + 87 + 60 });
 };

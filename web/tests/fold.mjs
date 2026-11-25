@@ -54,15 +54,16 @@ await W.reload();
 await until(() => W.locator('.card').count().then(n => n === 2));
 check('W unfold remembered', await W.evaluate(() => !document.querySelector('[data-id="t-f1"]').classList.contains('folded') && document.querySelector('[data-id="t-f2"]').classList.contains('folded')));
 
-// Board in Chrome full screen with the toolbar hidden: the window is the whole screen.
-async function board(full, bar) {
+// The board in a normal window and in Chrome full screen. The page is 900 tall in every case.
+// frame: outer minus inner height. screen: screen height. store: localStorage to start with.
+async function board({ frame, screen: sh, store = {} }) {
   const ctx = await cb.newContext({ viewport: { width: 1400, height: 900 } });
   await route(ctx);
-  await ctx.addInitScript(([full, bar]) => {
-    if (bar) localStorage.setItem('toolbarHeight', String(bar));
-    Object.defineProperty(window, 'outerHeight', { get: () => innerHeight + (full ? 0 : 87) });
-    Object.defineProperty(screen, 'height', { get: () => 900 + (full ? 0 : 60) });
-  }, [full, bar]);
+  await ctx.addInitScript(([frame, sh, store]) => {
+    for (const [k, v] of Object.entries(store)) localStorage.setItem(k, String(v));
+    Object.defineProperty(window, 'outerHeight', { get: () => innerHeight + frame });
+    Object.defineProperty(screen, 'height', { get: () => sh });
+  }, [frame, sh, store]);
   const D = await ctx.newPage();
   D.on('pageerror', e => console.log('[D pageerror]', e.message));
   await D.goto(SITE + 'desktop.html');
@@ -71,18 +72,50 @@ async function board(full, bar) {
   const r = await D.evaluate(() => ({
     top: document.querySelector('.note[data-id="t-f1"]').getBoundingClientRect().top,
     mid: document.querySelector('.note[data-id="t-f2"]').getBoundingClientRect().top,
-    stored: localStorage.getItem('toolbarHeight'),
+    ls: { ...localStorage },
   }));
-  await D.screenshot({ path: `${S}/board-${full ? 'full' : 'window'}.png` });
   await ctx.close();
   return r;
 }
-const win = await board(false, 0);
-check('window: note at the top stays at 0', win.top === 0, JSON.stringify(win));
-check('window: toolbar height remembered', win.stored === '87', win.stored);
-const full = await board(true, 100);
-check('full screen: top note below the toolbar', full.top === 106, JSON.stringify(full));
-check('full screen: middle note scaled into the rest', Math.abs(full.mid - (106 + 0.5 * (900 - 106))) < 1, String(full.mid));
+const show = r => JSON.stringify({ top: r.top, mid: r.mid, bar: r.ls.toolbarHeight, full: r.ls.toolbarFull, page: r.ls.fullPageHeight });
+
+const win = await board({ frame: 87, screen: 1050 });
+check('window: no inset', win.top === 0 && win.mid === 450, show(win));
+check('window: frame remembered', win.ls.toolbarHeight === '87', show(win));
+
+const hid = await board({ frame: 0, screen: 900, store: { toolbarHeight: 100 } });
+check('full screen, toolbar hidden: top note below the toolbar', hid.top === 100, show(hid));
+check('full screen, toolbar hidden: page height remembered', hid.ls.fullPageHeight === '900', show(hid));
+
+const notch = await board({ frame: 0, screen: 938, store: { toolbarHeight: 100 } });
+check('notch, toolbar hidden: top note below the toolbar', notch.top === 100, show(notch));
+
+// Toolbar always shown: in macOS full screen it is an overlay, so the frame still reads 0, but
+// the page is shorter than the screen by the toolbar (93) plus the notch (38).
+const shown = await board({ frame: 0, screen: 900 + 93 + 38, store: { toolbarHeight: 100, fullPageHeight: 993 } });
+check('notch, toolbar shown: no inset', shown.top === 0 && shown.mid === 450, show(shown));
+check('notch, toolbar shown: real toolbar height learned', shown.ls.toolbarFull === '93', show(shown));
+
+// Hidden again with the learned height: a note sits at the same spot on screen as when shown.
+const hidden993 = await (async () => {
+  const ctx = await cb.newContext({ viewport: { width: 1400, height: 993 } });
+  await route(ctx);
+  await ctx.addInitScript(() => {
+    localStorage.setItem('toolbarFull', '93');
+    Object.defineProperty(window, 'outerHeight', { get: () => innerHeight });
+    Object.defineProperty(screen, 'height', { get: () => 1031 });
+  });
+  const D = await ctx.newPage();
+  await D.goto(SITE + 'desktop.html');
+  await until(() => D.locator('.note[data-id="t-f2"]').count());
+  await wait(300);
+  const r = await D.evaluate(() => ['t-f1', 't-f2'].map(i => document.querySelector(`.note[data-id="${i}"]`).getBoundingClientRect().top));
+  await ctx.close();
+  return r;
+})();
+// Shown: the page starts 93 below the hidden page's top, so add 93 to compare on screen.
+check('hidden vs shown: top note at the same screen spot', hidden993[0] === shown.top + 93, `${hidden993[0]} vs ${shown.top + 93}`);
+check('hidden vs shown: middle note at the same screen spot', Math.abs(hidden993[1] - (shown.mid + 93)) < 1, `${hidden993[1]} vs ${shown.mid + 93}`);
 
 await fetch(`${SURL}/rest/v1/notes_test?id=neq.x`, { method: 'DELETE', headers: H });
 await cb.close(); await wb.close(); stop();

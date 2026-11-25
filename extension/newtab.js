@@ -1385,25 +1385,44 @@ chrome.storage.onChanged.addListener((changes, area) => {
 
 /* Chrome full screen with the toolbar hidden (cmd shift F): the page fills the whole screen,
    but a new tab shows the toolbar over the top of it, without the page getting any smaller.
-   The board then starts below where the toolbar lands, so no note sits under it. The toolbar's
-   height is measured in a normal window (outer minus inner height) and remembered. With the
-   toolbar always shown, or not in full screen, there is no inset. Note places stay fractions of
-   the board, so a note keeps its spot relative to the others either way. */
-const BAR_KEY = 'toolbarHeight';
+   The board then starts below where the toolbar lands, so no note sits under it.
+
+   Told apart by the page's height against the screen's, not by the window frame: in macOS full
+   screen the toolbar is an overlay even when it is always shown, so the frame reads zero both
+   ways. Hidden, the page is as tall as the screen (less a MacBook notch, the window stops below
+   it). Shown, it is shorter by the toolbar. A normal window is shorter still.
+
+   The inset is the toolbar's real height, learned with the toolbar shown (the hidden page
+   height minus the shown one), or from a normal window's frame, so a note sits at the same
+   spot on screen with the toolbar hidden or always shown. Note places stay fractions of the
+   board. */
+const NOTCH = 60;   // px the full screen page may fall short of the screen, for the notch
 let topInset = 0;
 
+function stored(key) {
+  try { return +localStorage.getItem(key) || 0; } catch { return 0; }
+}
+function store(key, v) {
+  try { localStorage.setItem(key, String(Math.round(v))); } catch {}
+}
+
 function measureInset() {
-  let inset = 0;
+  const sane = v => v > 20 && v < 250;
   const frame = outerHeight - innerHeight;
-  if (frame > 20) {
-    try { localStorage.setItem(BAR_KEY, String(frame)); } catch {}
-  } else if (!document.fullscreenElement && outerHeight >= screen.height - 4) {
-    let bar = 0;
-    try { bar = +localStorage.getItem(BAR_KEY) || 0; } catch {}
-    inset = (bar > 20 && bar < 200 ? bar : 110) + 6;
+  const hidden = !document.fullscreenElement
+    && innerHeight >= screen.height - NOTCH && innerHeight <= screen.height + 2;
+  if (hidden) {
+    store('fullPageHeight', innerHeight);
+  } else if (frame <= 20) {
+    // Full screen with the toolbar always shown: it takes exactly what the page lost.
+    const bar = stored('fullPageHeight') - innerHeight;
+    if (sane(bar)) store('toolbarFull', bar);
+  } else if (sane(frame)) {
+    store('toolbarHeight', frame);
   }
-  topInset = inset;
-  document.documentElement.style.setProperty('--top-inset', inset + 'px');
+  const bar = [stored('toolbarFull'), stored('toolbarHeight'), 90].find(sane);
+  topInset = hidden ? bar : 0;
+  document.documentElement.style.setProperty('--top-inset', topInset + 'px');
 }
 measureInset();
 
